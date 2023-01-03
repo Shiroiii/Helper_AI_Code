@@ -2,7 +2,7 @@ from typing import Tuple, List, Dict
 from torch import nn
 import torch
 from tqdm.auto import tqdm
-from utils import save_model
+from .utils import save_model
 
 def train_step(
         model:nn.Module,
