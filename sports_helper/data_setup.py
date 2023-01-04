@@ -42,13 +42,13 @@ def data_setup(
     #     root=dir, train=False, download=False, transform=transforms)
     # val_dataset, test_dataset = split_dataset(test_data)
     dataset = ImageFolder(root=dir, transform=transforms)
-    class_names = dataset.classes
+    class_map = dataset.class_to_idx
 
     # Create Dataloaders
     dataloader = DataLoader(
         dataset=dataset, shuffle=True if "train" in dir else False, batch_size=batch_size, num_workers=num_workers)
 
-    return dataset, dataloader
+    return dataset, dataloader, class_map
 
 
 def split_dataset(dataset: datasets, split_size: float = 0.2, seed: int = 42):

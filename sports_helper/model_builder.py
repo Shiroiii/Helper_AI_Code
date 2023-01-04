@@ -75,7 +75,7 @@ class TinyVGG(nn.Module):
 def create_vgg11(device: torch.device):
     # Get base model and pretrained weights and send to device
     weights = VGG11_Weights.DEFAULT
-    model = vgg11(weights=weights).to(device)
+    model = vgg11(weights=weights, progress=False).to(device)
 
     # Freeze the parameters of the base model
     for params in model.features.parameters():
@@ -97,7 +97,7 @@ def create_vgg11(device: torch.device):
 def create_effb0(device: torch.device):
     # Get base model and pretrained weights and send to device
     weights = EfficientNet_B0_Weights.DEFAULT
-    model = efficientnet_b0(weights=weights).to(device)
+    model = efficientnet_b0(weights=weights, progress=False).to(device)
 
     # Freeze the parameters of the base model
     for params in model.features.parameters():
