@@ -214,13 +214,13 @@ def train(
             best_loss = test_loss
             best_acc = test_acc
             save_model(model=model, target_dir="./model_params",
-                       model_name=model.name)
+                       model_name=f"{model.name}.pth.tar")
 
         if test_loss < best_loss and test_acc < best_acc:
             best_loss = test_loss
             best_acc = test_acc
             save_model(model=model, target_dir="./model_params",
-                       model_name=model.name)
+                       model_name=f"{model.name}.pth.tar")
 
         # Update results dictionary
         results["train_loss"].append(train_loss)
