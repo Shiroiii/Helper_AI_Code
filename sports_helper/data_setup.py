@@ -35,19 +35,20 @@ def data_setup(
     """
 
     # print(NUM_WORKERS, " workers", sep="")
-    
 
-    class_names = train_data.classes
+    # train_data = datasets.CIFAR10(
+    #     root=dir, train=True, download=False, transform=transforms)
+    # test_data = datasets.CIFAR10(
+    #     root=dir, train=False, download=False, transform=transforms)
+    # val_dataset, test_dataset = split_dataset(test_data)
+    dataset = ImageFolder(root=dir, transform=transforms)
+    class_names = dataset.classes
 
     # Create Dataloaders
-    train_dataloader = DataLoader(
-        dataset=train_data, shuffle=True, batch_size=batch_size, num_workers=num_workers)
-    val_dataloader = DataLoader(
-        dataset=val_dataset, shuffle=False, batch_size=batch_size, num_workers=num_workers)
-    test_dataloader = DataLoader(
-        dataset=test_dataset, shuffle=False, batch_size=batch_size, num_workers=num_workers)
+    dataloader = DataLoader(
+        dataset=dataset, shuffle=True if "train" in dir else False, batch_size=batch_size, num_workers=num_workers)
 
-    return train_data, test_data, train_dataloader, val_dataloader, test_dataloader, class_names
+    return dataset, dataloader
 
 
 def split_dataset(dataset: datasets, split_size: float = 0.2, seed: int = 42):
