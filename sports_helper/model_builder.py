@@ -121,13 +121,13 @@ def create_resnet18(device: torch.device):
     model = resnet18(weights=weights).to(device)
 
     # Freeze the parameters of the base model
-    for params in model.features.parameters():
+    for params in model.parameters():
         params.requires_grad = False
 
     model.classifier = nn.Sequential(
         nn.Dropout(p=0.5),
         nn.Linear(in_features=512, out_features=10)
-    ).to(device)
+    ).to(device).requires_grad_(True)
     model.name = "resnet18"
 
     transforms = weights.transforms()
