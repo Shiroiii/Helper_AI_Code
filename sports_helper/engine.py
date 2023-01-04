@@ -231,13 +231,15 @@ def train(
     return results
 
 
-def eval(model:nn.Module, loss:nn.Module, testDataloader: torch.utils.data.DataLoader, device:torch.device, filepath:str) -> dict:
-    best_model_state = torch.load(f"./model_params/{filepath}")#["network_params"]
+def eval(model: nn.Module, loss: nn.Module, testDataloader: torch.utils.data.DataLoader, device: torch.device, filepath: str) -> dict:
+    best_model_state = torch.load(
+        f"./model_params/{filepath}")  # ["network_params"]
     model.load_state_dict(best_model_state)
     result = dict()
 
     model.eval()
     with torch.inference_mode():
+        test_loss, test_acc = 0, 0
         for test_images, test_labels in testDataloader:
             test_images, test_labels = test_images.to(
                 device), test_labels.to(device)
@@ -247,10 +249,11 @@ def eval(model:nn.Module, loss:nn.Module, testDataloader: torch.utils.data.DataL
             test_loss += tloss
 
             lbl_pred_class = torch.argmax(test_pred, dim=1)
-            test_acc += (lbl_pred_class == test_labels).sum().item() / len(outputs)
+            test_acc += (lbl_pred_class ==
+                         test_labels).sum().item() / len(test_pred)
 
         result["model"] = str(type(model)).split("'")[1].split(".")[1]
         result["loss"] = round((test_loss / len(testDataloader)).item(), 3)
-        result["accuracy"] = round((test_acc / len(testDataloader)).item(), 3)
+        result["accuracy"] = round((test_acc / len(testDataloader)), 3)
 
     return result

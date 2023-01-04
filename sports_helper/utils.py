@@ -5,7 +5,8 @@ from datetime import datetime
 from typing import Dict
 import matplotlib.pyplot as plt
 
-def save_model(model:torch.nn.Module, target_dir:str, model_name:str) -> None:
+
+def save_model(model: torch.nn.Module, target_dir: str, model_name: str) -> None:
     """Saves a PyTorch model to a target directory.
 
     Args:
@@ -33,7 +34,7 @@ def save_model(model:torch.nn.Module, target_dir:str, model_name:str) -> None:
     torch.save(obj=model.state_dict(), f=model_save_path)
 
 
-def create_writer(experiment_name:str, model_name:str, extra:str=None) -> SummaryWriter:
+def create_writer(experiment_name: str, model_name: str, extra: str = None) -> SummaryWriter:
     """Creates a torch.utils.tensorboard.writer.SummaryWriter() instance saving to a specific log_dir.
 
         log_dir is a combination of runs/timestamp/experiment_name/model_name/extra.
@@ -58,7 +59,8 @@ def create_writer(experiment_name:str, model_name:str, extra:str=None) -> Summar
     """
 
     # Get timestamp of current date (all experiments on certain day live in same folder)
-    timestamp = datetime.now().strftime("%Y-%m-%d") # returns the current data in YYYY-MM-DD format
+    # returns the current data in YYYY-MM-DD format
+    timestamp = datetime.now().strftime("%Y-%m-%d")
     folder_name = Path("runs/")
 
     if extra:
@@ -71,7 +73,7 @@ def create_writer(experiment_name:str, model_name:str, extra:str=None) -> Summar
     return SummaryWriter(log_dir=str(log_dir))
 
 
-def plot(self, history:Dict[str, list]) -> None:
+def plot(self, history: Dict[str, list]) -> None:
     train_loss = history["train_loss"]
     test_loss = history["test_loss"]
     train_acc = history["train_acc"]
@@ -108,14 +110,12 @@ def plot(self, history:Dict[str, list]) -> None:
     # return fig
     fig, ax = plt.subplots(1, 2, figsize=(20, 10))
 
-    ax[0].plot(train_loss, label="train_loss");
-    ax[0].plot(test_loss, label="test_loss");
-    ax[0].set_title("Loss");
-    ax[0].legend();
+    ax[0].plot(train_loss, label="train_loss")
+    ax[0].plot(test_loss, label="test_loss")
+    ax[0].set_title("Loss")
+    ax[0].legend()
 
     ax[1].plot(train_acc, label="train_accuracy")
     ax[1].plot(test_acc, label="test_accuracy")
     ax[1].set_title("Accuracy")
-    ax[1].legend();
-
-    
+    ax[1].legend()

@@ -84,6 +84,7 @@ def create_vgg11(device: torch.device):
     model.classifier = nn.Sequential(
         nn.Dropout(p=0.5),
         nn.Linear(in_features=25088, out_features=100)
+        # nn.Softmax(dim=1)
     ).to(device)
     model.name = "VGG11"
 
