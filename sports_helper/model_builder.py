@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from torchvision.models import vgg11, VGG11_Weights, efficientnet_b0, EfficientNet_B0_Weights
+from torchvision.models import vgg11, VGG11_Weights, efficientnet_b0, EfficientNet_B0_Weights, resnet18, ResNet18_Weights
 
 
 class TinyVGG(nn.Module):
@@ -107,7 +107,28 @@ def create_effb0(device: torch.device):
         nn.Dropout(p=0.5),
         nn.Linear(in_features=1280, out_features=10)
     ).to(device)
-    model.name = "VGG11"
+    model.name = "effb0"
+
+    transforms = weights.transforms()
+
+    print(f"[INFO] Created new {model.name} model")
+
+    return model, transforms
+
+def create_resnet18(device: torch.device):
+    # Get base model and pretrained weights and send to device
+    weights = ResNet18_Weights.DEFAULT
+    model = resnet18(weights=weights).to(device)
+
+    # Freeze the parameters of the base model
+    for params in model.features.parameters():
+        params.requires_grad = False
+
+    model.classifier = nn.Sequential(
+        nn.Dropout(p=0.5),
+        nn.Linear(in_features=512, out_features=10)
+    ).to(device)
+    model.name = "resnet18"
 
     transforms = weights.transforms()
 
