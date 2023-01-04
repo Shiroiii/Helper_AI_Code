@@ -40,7 +40,7 @@ def train_step(
     train_loss, train_acc = 0, 0
 
     # Loop through data loader data batches
-    for batch, (imgs, lbls) in enumerate(dataloader):
+    for _, (imgs, lbls) in enumerate(dataloader):
         imgs, lbls = imgs.to(device), lbls.to(device)
 
         # Forward pass
@@ -231,28 +231,26 @@ def train(
     return results
 
 
-def eval(self, testDataloader: torch.utils.data.DataLoader) -> dict:
-    best_model_state = torch.load(
-        f"./model_params/{self.filepath}")["network_params"]
-    self.model.load_state_dict(best_model_state)
-    self.result = dict()
+def eval(model:nn.Module, loss:nn.Module, testDataloader: torch.utils.data.DataLoader, device:torch.device, filepath:str) -> dict:
+    best_model_state = torch.load(f"./model_params/{filepath}")#["network_params"]
+    model.load_state_dict(best_model_state)
+    result = dict()
 
-    self.model.eval()
+    model.eval()
     with torch.inference_mode():
         for test_images, test_labels in testDataloader:
             test_images, test_labels = test_images.to(
                 device), test_labels.to(device)
 
-            test_pred = self.model(test_images)
-            tloss = self.loss(test_pred, test_labels)
+            test_pred = model(test_images)
+            tloss = loss(test_pred, test_labels)
             test_loss += tloss
 
-            # test_accuracy += accuracy_score(torch.argmax(test_pred, dim=1).detach().cpu().numpy(), test_labels.cpu().numpy())
-            test_accuracy += self.accuracy(test_pred, test_labels)
+            lbl_pred_class = torch.argmax(test_pred, dim=1)
+            test_acc += (lbl_pred_class == test_labels).sum().item() / len(outputs)
 
-        self.result["model"] = str(type(self.model)).split("'")[
-            1].split(".")[1]
-        self.result["loss"] = round(
-            (test_loss / len(testDataloader)).item(), 3)
-        self.result["accuracy"] = round(
-            (test_accuracy / len(testDataloader)).item(), 3)
+        result["model"] = str(type(model)).split("'")[1].split(".")[1]
+        result["loss"] = round((test_loss / len(testDataloader)).item(), 3)
+        result["accuracy"] = round((test_acc / len(testDataloader)).item(), 3)
+
+    return result
