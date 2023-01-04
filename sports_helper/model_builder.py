@@ -83,7 +83,7 @@ def create_vgg11(device: torch.device):
 
     model.classifier = nn.Sequential(
         nn.Dropout(p=0.5),
-        nn.Linear(in_features=25088, out_features=10)
+        nn.Linear(in_features=25088, out_features=100)
     ).to(device)
     model.name = "VGG11"
 
@@ -105,7 +105,7 @@ def create_effb0(device: torch.device):
 
     model.classifier = nn.Sequential(
         nn.Dropout(p=0.5),
-        nn.Linear(in_features=1280, out_features=10)
+        nn.Linear(in_features=1280, out_features=100)
     ).to(device)
     model.name = "effb0"
 
@@ -114,6 +114,7 @@ def create_effb0(device: torch.device):
     print(f"[INFO] Created new {model.name} model")
 
     return model, transforms
+
 
 def create_resnet18(device: torch.device):
     # Get base model and pretrained weights and send to device
@@ -124,9 +125,9 @@ def create_resnet18(device: torch.device):
     for params in model.parameters():
         params.requires_grad = False
 
-    model.classifier = nn.Sequential(
+    model.fc = nn.Sequential(
         nn.Dropout(p=0.5),
-        nn.Linear(in_features=512, out_features=10)
+        nn.Linear(in_features=512, out_features=100)
     ).to(device).requires_grad_(True)
     model.name = "resnet18"
 
