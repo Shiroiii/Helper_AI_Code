@@ -2,14 +2,15 @@ from typing import Tuple, List, Dict
 from torch import nn
 import torch
 from tqdm.auto import tqdm
-from .utils import save_model
+from utils import save_model
+
 
 def train_step(
-        model:nn.Module,
-        optimizer:torch.optim.Optimizer,
-        loss_fn:nn.Module,
-        dataloader:torch.utils.data.DataLoader,
-        device:torch.device,
+        model: nn.Module,
+        optimizer: torch.optim.Optimizer,
+        loss_fn: nn.Module,
+        dataloader: torch.utils.data.DataLoader,
+        device: torch.device,
 ) -> Tuple[float, float]:
     """Trains a PyTorch model for a single epoch.
 
@@ -70,11 +71,12 @@ def train_step(
 
     return train_loss, train_acc
 
+
 def test_step(
-        model:nn.Module,
-        loss_fn:nn.Module,
-        dataloader:torch.utils.data.DataLoader,
-        device:torch.device
+        model: nn.Module,
+        loss_fn: nn.Module,
+        dataloader: torch.utils.data.DataLoader,
+        device: torch.device
 ) -> Tuple[float, float]:
     """Tests a PyTorch model for a single epoch.
 
@@ -126,15 +128,16 @@ def test_step(
     test_acc = test_acc / len(dataloader)
     return test_loss, test_acc
 
+
 def train(
-        model:nn.Module,
-        train_dataloader:torch.utils.data.DataLoader,
-        test_dataloader:torch.utils.data.DataLoader,
-        optimizer:torch.optim.Optimizer,
-        loss_fn:nn.Module,
-        device:torch.device,
-        writer:torch.utils.tensorboard.writer.SummaryWriter=None,
-        epochs:int=5
+        model: nn.Module,
+        train_dataloader: torch.utils.data.DataLoader,
+        test_dataloader: torch.utils.data.DataLoader,
+        optimizer: torch.optim.Optimizer,
+        loss_fn: nn.Module,
+        device: torch.device,
+        writer: torch.utils.tensorboard.writer.SummaryWriter = None,
+        epochs: int = 5
 ) -> Dict[str, list]:
     """Trains and tests a PyTorch model.
 
@@ -184,9 +187,11 @@ def train(
         train_loss, train_acc = train_step(model=model, optimizer=optimizer, loss_fn=loss_fn,
                                            dataloader=train_dataloader, device=device)
         # TEST STEP
-        test_loss, test_acc = test_step(model=model, loss_fn=loss_fn, dataloader=test_dataloader, device=device)
+        test_loss, test_acc = test_step(
+            model=model, loss_fn=loss_fn, dataloader=test_dataloader, device=device)
 
-        print(f"Epoch: {epoch+1}", f"train_loss: {train_loss:.4f}", f"test_loss: {test_loss:.4f}", f"train_acc: {train_acc:.4f}", f"test_acc: {test_acc:.4f}", sep=" | ")
+        print(f"Epoch: {epoch+1}", f"train_loss: {train_loss:.4f}", f"test_loss: {test_loss:.4f}",
+              f"train_acc: {train_acc:.4f}", f"test_acc: {test_acc:.4f}", sep=" | ")
 
         # See if there's writer, if so log to it
         if writer:
@@ -202,20 +207,20 @@ def train(
                 "test_acc": test_acc
             }, global_step=epoch)
 
-
             writer.close()
 
         # Model checkpointing
         if best_loss is None and best_acc is None:
             best_loss = test_loss
             best_acc = test_acc
-            save_model(model=model, target_dir="./model_params", model_name=model.name)
+            save_model(model=model, target_dir="./model_params",
+                       model_name=model.name)
 
         if test_loss < best_loss and test_acc < best_acc:
             best_loss = test_loss
             best_acc = test_acc
-            save_model(model=model, target_dir="./model_params", model_name=model.name)
-
+            save_model(model=model, target_dir="./model_params",
+                       model_name=model.name)
 
         # Update results dictionary
         results["train_loss"].append(train_loss)
@@ -227,14 +232,16 @@ def train(
 
 
 def eval(self, testDataloader: torch.utils.data.DataLoader) -> dict:
-    best_model_state = torch.load(f"./model_params/{self.filepath}")["network_params"]
+    best_model_state = torch.load(
+        f"./model_params/{self.filepath}")["network_params"]
     self.model.load_state_dict(best_model_state)
     self.result = dict()
 
     self.model.eval()
     with torch.inference_mode():
         for test_images, test_labels in testDataloader:
-            test_images, test_labels = test_images.to(device), test_labels.to(device)
+            test_images, test_labels = test_images.to(
+                device), test_labels.to(device)
 
             test_pred = self.model(test_images)
             tloss = self.loss(test_pred, test_labels)
@@ -243,6 +250,9 @@ def eval(self, testDataloader: torch.utils.data.DataLoader) -> dict:
             # test_accuracy += accuracy_score(torch.argmax(test_pred, dim=1).detach().cpu().numpy(), test_labels.cpu().numpy())
             test_accuracy += self.accuracy(test_pred, test_labels)
 
-        self.result["model"] = str(type(self.model)).split("'")[1].split(".")[1]
-        self.result["loss"] = round((test_loss / len(testDataloader)).item(), 3)
-        self.result["accuracy"] = round((test_accuracy / len(testDataloader)).item(), 3)
+        self.result["model"] = str(type(self.model)).split("'")[
+            1].split(".")[1]
+        self.result["loss"] = round(
+            (test_loss / len(testDataloader)).item(), 3)
+        self.result["accuracy"] = round(
+            (test_accuracy / len(testDataloader)).item(), 3)

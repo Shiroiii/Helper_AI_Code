@@ -4,7 +4,6 @@ from pathlib import Path
 from datetime import datetime
 from typing import Dict
 import matplotlib.pyplot as plt
-import os
 
 def save_model(model:torch.nn.Module, target_dir:str, model_name:str) -> None:
     """Saves a PyTorch model to a target directory.

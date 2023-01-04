@@ -8,6 +8,8 @@ version:
 test:
 	pytest
 
+virtual:
+	$(PYTHON) -m venv helper
 
 requires:
 	pip freeze > requirements.txt

@@ -2,6 +2,7 @@ import torch
 from torch import nn
 from torchvision.models import vgg11, VGG11_Weights, efficientnet_b0, EfficientNet_B0_Weights
 
+
 class TinyVGG(nn.Module):
     """Creates the TinyVGG architecture.
 
@@ -70,7 +71,8 @@ class TinyVGG(nn.Module):
         # print(x)
         return x
 
-def create_vgg11(device:torch.device):
+
+def create_vgg11(device: torch.device):
     # Get base model and pretrained weights and send to device
     weights = VGG11_Weights.DEFAULT
     model = vgg11(weights=weights).to(device)
@@ -91,23 +93,24 @@ def create_vgg11(device:torch.device):
 
     return model, transforms
 
-def create_effb0(device:torch.device):
-  # Get base model and pretrained weights and send to device
-  weights = EfficientNet_B0_Weights.DEFAULT
-  model = efficientnet_b0(weights=weights).to(device)
 
-  # Freeze the parameters of the base model
-  for params in model.features.parameters():
-      params.requires_grad = False
+def create_effb0(device: torch.device):
+    # Get base model and pretrained weights and send to device
+    weights = EfficientNet_B0_Weights.DEFAULT
+    model = efficientnet_b0(weights=weights).to(device)
 
-  model.classifier = nn.Sequential(
-      nn.Dropout(p=0.5),
-      nn.Linear(in_features=1280, out_features=10)
-  ).to(device)
-  model.name = "VGG11"
+    # Freeze the parameters of the base model
+    for params in model.features.parameters():
+        params.requires_grad = False
 
-  transforms = weights.transforms()
+    model.classifier = nn.Sequential(
+        nn.Dropout(p=0.5),
+        nn.Linear(in_features=1280, out_features=10)
+    ).to(device)
+    model.name = "VGG11"
 
-  print(f"[INFO] Created new {model.name} model")
+    transforms = weights.transforms()
 
-  return model, transforms
+    print(f"[INFO] Created new {model.name} model")
+
+    return model, transforms
